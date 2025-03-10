@@ -1,0 +1,31 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register page title";
+}
+
+<h2>Register</h2>
+
+<form method="post" onsubmit="console.log('Form submitted');">
+    <div>
+        <label for="Username">Username:</label>
+        <input type="text" id="Username" name="Username" required />
+    </div>
+    <div>
+        <label for="Password">Password:</label>
+        <input type="password" id="Password" name="Password" required />
+    </div>
+    <div>
+        <label for="Role">Role:</label>
+        <select id="Role" name="Role">
+            <option value="User">User</option>
+            <option value="Admin">Admin</option>
+        </select>
+    </div>
+    <button type="submit">Register</button>
+</form>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <p>@Model.Message</p>
+}
