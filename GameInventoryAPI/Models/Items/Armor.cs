@@ -1,5 +1,10 @@
-﻿public class Armor : Item
+﻿using System.ComponentModel.DataAnnotations;
+
+public class Armor : Item
 {
-    public int Defense { get; set; } // Уникальное свойство
-    public string ArmorType { get; set; } // Тип доспеха (шлем, нагрудник и т.д.)
+    [Required]
+    public int Defense { get; set; }
+
+    [Required]
+    public string ArmorType { get; set; } // "Helmet", "Chestplate"
 }

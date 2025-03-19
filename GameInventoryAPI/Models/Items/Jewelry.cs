@@ -1,5 +1,10 @@
-﻿public class Jewelry : Item
+﻿using System.ComponentModel.DataAnnotations;
+
+public class Jewelry : Item
 {
-    public int MagicPower { get; set; } // Уникальное свойство
-    public string Effect { get; set; } // Эффект (например, + к магии)
+    [Required]
+    public int MagicPower { get; set; }
+
+    [Required]
+    public string Effect { get; set; } // "+10 Mana Regen"
 }

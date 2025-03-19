@@ -1,5 +1,10 @@
-﻿public class Weapon : Item
+﻿using System.ComponentModel.DataAnnotations;
+
+public class Weapon : Item
 {
-    public int Damage { get; set; } // Уникальное свойство
-    public string WeaponType { get; set; } // Тип оружия (меч, лук и т.д.)
+    [Required]
+    public int Damage { get; set; }
+
+    [Required]
+    public string WeaponType { get; set; } // "Sword", "Bow", "Axe"
 }

@@ -1,23 +1,27 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
 
 public static class DbInitializer
 {
     public static void Initialize(ApplicationDbContext context, IConfiguration configuration)
     {
-        // Удаляем базу данных, если она существует
-        context.Database.EnsureDeleted();
-        // Применение миграций (создание или обновление базы данных)
+        // Проверяем настройку из appsettings.json, чтобы не пересоздавать базу каждый раз
+        var recreateDatabase = configuration.GetValue<bool>("Database:RecreateOnStart");
+
+        if (recreateDatabase)
+        {
+            context.Database.EnsureDeleted();
+        }
+
+        // Применяем миграции (создаём или обновляем базу)
         context.Database.Migrate();
 
-        // Чтение начальных данных из appsettings.json
         var initialData = configuration.GetSection("InitialData");
 
         // Заполнение таблицы Users
         if (!context.Users.Any())
         {
-            var users = initialData.GetSection("Users").Get<List<User>>();
+            var users = initialData.GetSection("Users").Get<List<User>>() ?? new List<User>();
             context.Users.AddRange(users);
             context.SaveChanges();
         }
@@ -25,53 +29,41 @@ public static class DbInitializer
         // Заполнение таблицы Items
         if (!context.Items.Any())
         {
-            var items = initialData.GetSection("Items").Get<List<Item>>();
+            var items = initialData.GetSection("Items").Get<List<Item>>() ?? new List<Item>();
 
             foreach (var itemData in items)
             {
-                Item item = null;
-
-                switch (itemData.Type)
+                Item item = itemData switch
                 {
-                    case "Weapon":
-                        item = new Weapon
-                        {
-                            Name = itemData.Name,
-                            Type = itemData.Type,
-                            Level = itemData.Level,
-                            Rarity = itemData.Rarity,
-                            UniqueProperties = itemData.UniqueProperties ?? string.Empty, // Убедимся, что значение не NULL
-                            Damage = (itemData as Weapon)?.Damage ?? 0,
-                            WeaponType = (itemData as Weapon)?.WeaponType
-                        };
-                        break;
-
-                    case "Armor":
-                        item = new Armor
-                        {
-                            Name = itemData.Name,
-                            Type = itemData.Type,
-                            Level = itemData.Level,
-                            Rarity = itemData.Rarity,
-                            UniqueProperties = itemData.UniqueProperties ?? string.Empty, // Убедимся, что значение не NULL
-                            Defense = (itemData as Armor)?.Defense ?? 0,
-                            ArmorType = (itemData as Armor)?.ArmorType
-                        };
-                        break;
-
-                    case "Jewelry":
-                        item = new Jewelry
-                        {
-                            Name = itemData.Name,
-                            Type = itemData.Type,
-                            Level = itemData.Level,
-                            Rarity = itemData.Rarity,
-                            UniqueProperties = itemData.UniqueProperties ?? string.Empty, // Убедимся, что значение не NULL
-                            MagicPower = (itemData as Jewelry)?.MagicPower ?? 0,
-                            Effect = (itemData as Jewelry)?.Effect
-                        };
-                        break;
-                }
+                    Weapon weapon => new Weapon
+                    {
+                        Name = weapon.Name,
+                        Level = weapon.Level,
+                        Rarity = weapon.Rarity,
+                        UniqueProperties = weapon.UniqueProperties ?? string.Empty,
+                        Damage = weapon.Damage,
+                        WeaponType = weapon.WeaponType
+                    },
+                    Armor armor => new Armor
+                    {
+                        Name = armor.Name,
+                        Level = armor.Level,
+                        Rarity = armor.Rarity,
+                        UniqueProperties = armor.UniqueProperties ?? string.Empty,
+                        Defense = armor.Defense,
+                        ArmorType = armor.ArmorType
+                    },
+                    Jewelry jewelry => new Jewelry
+                    {
+                        Name = jewelry.Name,
+                        Level = jewelry.Level,
+                        Rarity = jewelry.Rarity,
+                        UniqueProperties = jewelry.UniqueProperties ?? string.Empty,
+                        MagicPower = jewelry.MagicPower,
+                        Effect = jewelry.Effect
+                    },
+                    _ => null
+                };
 
                 if (item != null)
                 {
@@ -85,20 +77,24 @@ public static class DbInitializer
         // Заполнение таблицы Inventories
         if (!context.Inventories.Any())
         {
-            var user = context.Users.First(); // Берём первого пользователя
-            var items = context.Items.Take(3).ToList(); // Берём первые 3 предмета
+            var user = context.Users.FirstOrDefault();
+            var items = context.Items.Take(3).ToList();
 
-            foreach (var item in items)
+            if (user != null && items.Any())
             {
-                context.Inventories.Add(new Inventory
+                foreach (var item in items)
                 {
-                    UserId = user.Id,
-                    ItemId = item.Id,
-                    AcquiredDate = DateTime.UtcNow // Указываем текущую дату
-                });
-            }
+                    context.Inventories.Add(new Inventory
+                    {
+                        UserId = user.Id,
+                        ItemId = item.Id,
+                        Quantity = 1,  // Устанавливаем количество по умолчанию
+                        AcquiredDate = DateTime.UtcNow
+                    });
+                }
 
-            context.SaveChanges();
+                context.SaveChanges();
+            }
         }
     }
 }

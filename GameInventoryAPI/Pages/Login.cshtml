@@ -1,13 +1,13 @@
 ﻿@page
-@model GameInventoryAPI.Pages.RegisterModel
+@model GameInventoryAPI.Pages.LoginModel
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Login";
+    Layout = "_Layout";
 }
 
-<h2>Register</h2>
+<h2>Login</h2>
 
 <form method="post">
-    @Html.AntiForgeryToken() <!-- Добавь эту строку -->
     <div>
         <label for="Username">Username:</label>
         <input type="text" id="Username" name="Username" asp-for="Username" />
@@ -18,7 +18,7 @@
         <input type="password" id="Password" name="Password" asp-for="Password" />
         <span asp-validation-for="Password" style="color:red"></span>
     </div>
-    <button type="submit">Register</button>
+    <button type="submit">Login</button>
 </form>
 
 @if (!string.IsNullOrEmpty(Model.Message))
