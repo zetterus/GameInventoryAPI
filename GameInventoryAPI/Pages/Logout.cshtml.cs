@@ -7,6 +7,7 @@ namespace GameInventoryAPI.Pages
     [Authorize]
     public class LogoutModel : PageModel
     {
+        [ValidateAntiForgeryToken]
         public IActionResult OnPost()
         {
             // Удаляем JWT из cookies

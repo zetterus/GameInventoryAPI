@@ -87,7 +87,7 @@ namespace GameInventoryAPI.Pages
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(24 * 60), // Время жизни токена
+                expires: DateTime.Now.AddMinutes(30), // Время жизни токена
                 signingCredentials: credentials
             );
 
