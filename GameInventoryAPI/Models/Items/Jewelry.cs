@@ -1,10 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-public class Jewelry : Item
+namespace GameInventoryAPI.Models.Items
 {
-    [Required]
-    public int MagicPower { get; set; }
+    public class Jewelry : Item
+    {
+        [Required]
+        public int MagicPower { get; set; }
 
-    [Required]
-    public string Effect { get; set; } // "+10 Mana Regen"
+        [Required]
+        public string Effect { get; set; }
+    }
 }

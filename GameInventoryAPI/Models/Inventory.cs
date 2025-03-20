@@ -1,21 +1,22 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using GameInventoryAPI.Models.Items; // Для Item
 
-public class Inventory
+namespace GameInventoryAPI.Models
 {
-    [Required]
-    public int UserId { get; set; }
+    public class Inventory
+    {
+        [Required]
+        public int UserId { get; set; }
+        public User User { get; set; }
 
-    [Required]
-    public int ItemId { get; set; }
+        [Required]
+        public int ItemId { get; set; }
+        public Item Item { get; set; }
 
-    [Required]
-    [Range(1, int.MaxValue)]
-    public int Quantity { get; set; } = 1; // По умолчанию 1
+        [Required]
+        public int Quantity { get; set; }
 
-    [Required]
-    public DateTime AcquiredDate { get; set; } = DateTime.UtcNow;
-
-    // Навигационные свойства
-    public User User { get; set; }
-    public Item Item { get; set; }
+        [Required]
+        public DateTime AcquiredDate { get; set; }
+    }
 }

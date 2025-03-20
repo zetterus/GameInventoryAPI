@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using GameInventoryAPI.Data;
+using GameInventoryAPI.Models;
 
 namespace GameInventoryAPI.Pages
 {

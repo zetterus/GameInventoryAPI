@@ -1,99 +1,102 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using GameInventoryAPI.Models; // Для User и Inventory
+using GameInventoryAPI.Models.Items; // Для Item и его наследников
 
-public static class DbInitializer
+namespace GameInventoryAPI.Data
 {
-    public static void Initialize(ApplicationDbContext context, IConfiguration configuration)
+    public static class DbInitializer
     {
-        // Проверяем настройку из appsettings.json, чтобы не пересоздавать базу каждый раз
-        var recreateDatabase = configuration.GetValue<bool>("Database:RecreateOnStart");
-
-        if (recreateDatabase)
+        public static void Initialize(ApplicationDbContext context, IConfiguration configuration)
         {
-            context.Database.EnsureDeleted();
-        }
+            var recreateDatabase = configuration.GetValue<bool>("Database:RecreateOnStart");
 
-        // Применяем миграции (создаём или обновляем базу)
-        context.Database.Migrate();
-
-        var initialData = configuration.GetSection("InitialData");
-
-        // Заполнение таблицы Users
-        if (!context.Users.Any())
-        {
-            var users = initialData.GetSection("Users").Get<List<User>>() ?? new List<User>();
-            context.Users.AddRange(users);
-            context.SaveChanges();
-        }
-
-        // Заполнение таблицы Items
-        if (!context.Items.Any())
-        {
-            var items = initialData.GetSection("Items").Get<List<Item>>() ?? new List<Item>();
-
-            foreach (var itemData in items)
+            if (recreateDatabase)
             {
-                Item item = itemData switch
-                {
-                    Weapon weapon => new Weapon
-                    {
-                        Name = weapon.Name,
-                        Level = weapon.Level,
-                        Rarity = weapon.Rarity,
-                        UniqueProperties = weapon.UniqueProperties ?? string.Empty,
-                        Damage = weapon.Damage,
-                        WeaponType = weapon.WeaponType
-                    },
-                    Armor armor => new Armor
-                    {
-                        Name = armor.Name,
-                        Level = armor.Level,
-                        Rarity = armor.Rarity,
-                        UniqueProperties = armor.UniqueProperties ?? string.Empty,
-                        Defense = armor.Defense,
-                        ArmorType = armor.ArmorType
-                    },
-                    Jewelry jewelry => new Jewelry
-                    {
-                        Name = jewelry.Name,
-                        Level = jewelry.Level,
-                        Rarity = jewelry.Rarity,
-                        UniqueProperties = jewelry.UniqueProperties ?? string.Empty,
-                        MagicPower = jewelry.MagicPower,
-                        Effect = jewelry.Effect
-                    },
-                    _ => null
-                };
-
-                if (item != null)
-                {
-                    context.Items.Add(item);
-                }
+                context.Database.EnsureDeleted();
             }
 
-            context.SaveChanges();
-        }
+            context.Database.Migrate();
 
-        // Заполнение таблицы Inventories
-        if (!context.Inventories.Any())
-        {
-            var user = context.Users.FirstOrDefault();
-            var items = context.Items.Take(3).ToList();
+            var initialData = configuration.GetSection("InitialData");
 
-            if (user != null && items.Any())
+            if (!context.Users.Any())
             {
-                foreach (var item in items)
+                var users = initialData.GetSection("Users").Get<List<User>>() ?? new List<User>();
+                context.Users.AddRange(users);
+                context.SaveChanges();
+            }
+
+            if (!context.Items.Any())
+            {
+                var items = initialData.GetSection("Items").Get<List<Item>>() ?? new List<Item>();
+
+                foreach (var itemData in items)
                 {
-                    context.Inventories.Add(new Inventory
+                    Item item = itemData switch
                     {
-                        UserId = user.Id,
-                        ItemId = item.Id,
-                        Quantity = 1,  // Устанавливаем количество по умолчанию
-                        AcquiredDate = DateTime.UtcNow
-                    });
+                        Weapon weapon => new Weapon
+                        {
+                            Name = weapon.Name,
+                            Level = weapon.Level,
+                            Rarity = weapon.Rarity,
+                            UniqueProperties = weapon.UniqueProperties ?? string.Empty,
+                            Damage = weapon.Damage,
+                            WeaponType = weapon.WeaponType,
+                            Type = "Weapon"
+                        },
+                        Armor armor => new Armor
+                        {
+                            Name = armor.Name,
+                            Level = armor.Level,
+                            Rarity = armor.Rarity,
+                            UniqueProperties = armor.UniqueProperties ?? string.Empty,
+                            Defense = armor.Defense,
+                            ArmorType = armor.ArmorType,
+                            Type = "Armor"
+                        },
+                        Jewelry jewelry => new Jewelry
+                        {
+                            Name = jewelry.Name,
+                            Level = jewelry.Level,
+                            Rarity = jewelry.Rarity,
+                            UniqueProperties = jewelry.UniqueProperties ?? string.Empty,
+                            MagicPower = jewelry.MagicPower,
+                            Effect = jewelry.Effect,
+                            Type = "Jewelry"
+                        },
+                        _ => null
+                    };
+
+                    if (item != null)
+                    {
+                        context.Items.Add(item);
+                    }
                 }
 
                 context.SaveChanges();
+            }
+
+            if (!context.Inventories.Any())
+            {
+                var user = context.Users.FirstOrDefault();
+                var items = context.Items.Take(3).ToList();
+
+                if (user != null && items.Any())
+                {
+                    foreach (var item in items)
+                    {
+                        context.Inventories.Add(new Inventory
+                        {
+                            UserId = user.Id,
+                            ItemId = item.Id,
+                            Quantity = 1,
+                            AcquiredDate = DateTime.UtcNow
+                        });
+                    }
+
+                    context.SaveChanges();
+                }
             }
         }
     }

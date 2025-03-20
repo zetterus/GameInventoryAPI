@@ -1,10 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-public class Armor : Item
+namespace GameInventoryAPI.Models.Items
 {
-    [Required]
-    public int Defense { get; set; }
+    public class Armor : Item
+    {
+        [Required]
+        public int Defense { get; set; }
 
-    [Required]
-    public string ArmorType { get; set; } // "Helmet", "Chestplate"
+        [Required]
+        public string ArmorType { get; set; }
+    }
 }

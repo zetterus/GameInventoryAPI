@@ -1,10 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-public class Weapon : Item
+namespace GameInventoryAPI.Models.Items
 {
-    [Required]
-    public int Damage { get; set; }
+    public class Weapon : Item
+    {
+        [Required]
+        public int Damage { get; set; }
 
-    [Required]
-    public string WeaponType { get; set; } // "Sword", "Bow", "Axe"
+        [Required]
+        public string WeaponType { get; set; }
+    }
 }

@@ -7,6 +7,8 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using GameInventoryAPI.Data;
+using GameInventoryAPI.Models;
 
 namespace GameInventoryAPI.Pages
 {

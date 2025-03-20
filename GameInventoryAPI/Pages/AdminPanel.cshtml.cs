@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace GameInventoryAPI.Pages
 {
     [Authorize(Roles = "Admin")]
-    public class AdminModel : PageModel
+    public class AdminPanelModel : PageModel
     {
         public void OnGet()
         {

@@ -1,0 +1,108 @@
+﻿@page
+@model GameInventoryAPI.Pages.Admin.AddItemModel
+@{
+    ViewData["Title"] = "Add Item";
+}
+
+<h2>Add New Item</h2>
+
+<form method="post">
+    <div>
+        <label asp-for="ItemType">Item Type:</label>
+        <select asp-for="ItemType" asp-items="Model.ItemTypes" onchange="toggleFields()">
+            <option value="">Select Type</option>
+        </select>
+        <span asp-validation-for="ItemType"></span>
+    </div>
+
+    <div>
+        <label asp-for="Name">Name:</label>
+        <input asp-for="Name" required />
+        <span asp-validation-for="Name"></span>
+    </div>
+
+    <div>
+        <label asp-for="Level">Level:</label>
+        <input asp-for="Level" type="number" required />
+        <span asp-validation-for="Level"></span>
+    </div>
+
+    <div>
+        <label asp-for="Rarity">Rarity:</label>
+        <input asp-for="Rarity" required />
+        <span asp-validation-for="Rarity"></span>
+    </div>
+
+    <div>
+        <label asp-for="UniqueProperties">Unique Properties:</label>
+        <input asp-for="UniqueProperties" />
+        <span asp-validation-for="UniqueProperties"></span>
+    </div>
+
+    <!-- Поля для Weapon -->
+    <div id="weaponFields" style="display: none;">
+        <div>
+            <label asp-for="Damage">Damage:</label>
+            <input asp-for="Damage" type="number" required />
+            <span asp-validation-for="Damage"></span>
+        </div>
+        <div>
+            <label asp-for="WeaponType">Weapon Type:</label>
+            <select asp-for="WeaponType" required>
+                <option value="">Select Weapon Type</option>
+                <option value="Sword">Sword</option>
+                <option value="Bow">Bow</option>
+                <option value="Axe">Axe</option>
+            </select>
+            <span asp-validation-for="WeaponType"></span>
+        </div>
+    </div>
+
+    <!-- Поля для Armor -->
+    <div id="armorFields" style="display: none;">
+        <div>
+            <label asp-for="Defense">Defense:</label>
+            <input asp-for="Defense" type="number" required />
+            <span asp-validation-for="Defense"></span>
+        </div>
+        <div>
+            <label asp-for="ArmorType">Armor Type:</label>
+            <select asp-for="ArmorType" required>
+                <option value="">Select Armor Type</option>
+                <option value="Helmet">Helmet</option>
+                <option value="Chestplate">Chestplate</option>
+            </select>
+            <span asp-validation-for="ArmorType"></span>
+        </div>
+    </div>
+
+    <!-- Поля для Jewelry -->
+    <div id="jewelryFields" style="display: none;">
+        <div>
+            <label asp-for="MagicPower">Magic Power:</label>
+            <input asp-for="MagicPower" type="number" required />
+            <span asp-validation-for="MagicPower"></span>
+        </div>
+        <div>
+            <label asp-for="Effect">Effect:</label>
+            <input asp-for="Effect" required />
+            <span asp-validation-for="Effect"></span>
+        </div>
+    </div>
+
+    <button type="submit">Add Item</button>
+</form>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <p>@Model.Message</p>
+}
+
+<script>
+    function toggleFields() {
+        const itemType = document.getElementById('ItemType').value;
+        document.getElementById('weaponFields').style.display = itemType === 'Weapon' ? 'block' : 'none';
+        document.getElementById('armorFields').style.display = itemType === 'Armor' ? 'block' : 'none';
+        document.getElementById('jewelryFields').style.display = itemType === 'Jewelry' ? 'block' : 'none';
+    }
+</script>

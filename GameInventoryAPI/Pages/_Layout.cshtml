@@ -4,95 +4,125 @@
 <head>
     <meta charset="utf-8" />
     <title>@ViewData["Title"]</title>
-    <!-- Подключаем Google Material Symbols -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=dark_mode" />
+    <!-- Подключаем Google Material Symbols с увеличенным opsz и новой иконкой -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,100..700,0..1,-50..200&icon_names=brightness_4" />
     <style>
         :root {
             /* Светлая тема (по умолчанию) */
             --background-color: #ffffff;
-            --text-color: #000000;
-            --nav-bg-color: #f0f0f0;
+            --text-color: #333333;
+            --nav-bg-color: #f8f9fa;
             --button-bg-color: #d0d0d0;
             --button-hover-bg-color: #c0c0c0;
             --input-bg-color: #ffffff;
-            --input-text-color: #000000;
-            --icon-color: #333333; /* Тёмный цвет для светлой темы */
+            --input-text-color: #333333;
+            --input-border-color: #ced4da;
+            --icon-color: #666666;
+            --shadow-color: rgba(0, 0, 0, 0.1);
         }
 
         /* Тёмная тема */
         [data-theme="dark"] {
             --background-color: #1a1a1a;
-            --text-color: #ffffff;
-            --nav-bg-color: #2d2d2d;
+            --text-color: #e0e0e0;
+            --nav-bg-color: #2c2c2c;
             --button-bg-color: #4a4a4a;
             --button-hover-bg-color: #5a5a5a;
             --input-bg-color: #333333;
-            --input-text-color: #ffffff;
-            --icon-color: #e3e3e3; /* Светлый цвет для тёмной темы */
+            --input-text-color: #e0e0e0;
+            --input-border-color: #555555;
+            --icon-color: #bbbbbb;
+            --shadow-color: rgba(255, 255, 255, 0.1);
         }
 
         body {
             background-color: var(--background-color);
             color: var(--text-color);
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         nav {
             background-color: var(--nav-bg-color);
-            padding: 10px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 10px var(--shadow-color);
         }
 
-        .nav-left button {
-            background-color: var(--button-bg-color);
-            color: var(--text-color);
-            border: none;
-            padding: 5px 10px;
-            margin-right: 5px;
-            cursor: pointer;
-        }
-
-            .nav-left button:hover {
-                background-color: var(--button-hover-bg-color);
-            }
-
-        .nav-right {
+        .nav-left, .nav-right {
             display: flex;
             align-items: center;
+            gap: 15px;
         }
 
-            .nav-right input {
-                margin-right: 5px;
-                padding: 5px;
-                background-color: var(--input-bg-color);
-                color: var(--input-text-color);
-                border: 1px solid var(--text-color);
-            }
-
-            .nav-right button {
+            .nav-left button, .nav-right button {
                 background-color: var(--button-bg-color);
                 color: var(--text-color);
                 border: none;
-                padding: 5px 10px;
+                padding: 8px 16px;
+                border-radius: 5px;
+                font-size: 16px;
+                font-weight: 500;
                 cursor: pointer;
+                transition: background-color 0.3s;
             }
 
-                .nav-right button:hover {
+                .nav-left button:hover, .nav-right button:hover {
                     background-color: var(--button-hover-bg-color);
                 }
 
+            .nav-right input {
+                padding: 8px;
+                background-color: var(--input-bg-color);
+                color: var(--input-text-color);
+                border: 1px solid var(--input-border-color);
+                border-radius: 5px;
+                font-size: 16px;
+                transition: border-color 0.3s;
+            }
+
+                .nav-right input:focus {
+                    outline: none;
+                    border-color: #007bff;
+                }
+
         .theme-toggle {
-            margin-right: 10px;
             cursor: pointer;
+            padding: 12px;
+            border-radius: 50%;
+            transition: background-color 0.3s;
         }
 
+            .theme-toggle:hover {
+                background-color: rgba(0, 0, 0, 0.1);
+            }
+
         .material-symbols-outlined {
-            color: var(--icon-color); /* Цвет иконки зависит от темы */
-            font-size: 24px;
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            color: var(--icon-color);
+            font-size: 96px; /* Увеличиваем размер ещё больше */
+            line-height: 1;
+            display: block;
+            transform: scale(1.5); /* Дополнительное масштабирование */
+            transition: color 0.3s, transform 0.3s;
+        }
+
+            .material-symbols-outlined:hover {
+                color: #007bff;
+                transform: scale(1.6); /* Лёгкое увеличение при наведении */
+            }
+
+        .nav-right span {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
         }
     </style>
 </head>
@@ -107,7 +137,7 @@
                 {
                     @if (User.IsInRole("Admin"))
                     {
-                        <form method="get" action="/Admin" style="display: inline;">
+                        <form method="get" action="/AdminPanel" style="display: inline;">
                             <button type="submit">Admin Panel</button>
                         </form>
                     }
@@ -142,11 +172,11 @@
                         <button type="submit">Sign In</button>
                     </form>
                 }
-                else
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <span class="material-symbols-outlined">brightness_4</span>
+                </div>
+                @if (User.Identity.IsAuthenticated)
                 {
-                    <div class="theme-toggle" onclick="toggleTheme()">
-                        <span class="material-symbols-outlined">dark_mode</span>
-                    </div>
                     <span>Welcome, @User.Identity.Name! (Role: @User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value)</span>
                 }
             </div>
